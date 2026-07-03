@@ -8,6 +8,54 @@ char map[MAP_SIZE][MAP_SIZE];
 
 
 
+
+
+typedef struct 
+{
+	char playerName[50];
+	char playerSymbol;
+	int row;
+	int col;	
+	int playerHealth;
+	int playerScore;
+	int keysCollected;
+
+}player_t;
+
+
+player_t player1; 
+
+void placePlayer()
+
+{
+	int x, y;
+
+	while (1){
+
+		x = rand() % MAP_SIZE;
+		y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+
+		{ // Places the player represented by 'P' character in a random empty position.
+
+			player1.row = x;
+			player1.col = y;
+			player1.playerName[0] = 'P';
+			player1.playerSymbol = '1';
+			player1.playerHealth = 100;
+			player1.playerScore = 0;
+			player1.keysCollected = 0;
+
+			map[x][y] = player1.playerSymbol; // Places the player symbol on the map.
+			break;
+
+		}
+	}
+}
+
+
+
 void initializeMap()
 {  // Initializes the 15x15 map and places border walls.
 
@@ -181,6 +229,7 @@ int main ()
 	placeTreasures();
 	placeHealthPacks();
 	placeKeys();
+	placePlayer();
 	printMap();
 
 	return 0;

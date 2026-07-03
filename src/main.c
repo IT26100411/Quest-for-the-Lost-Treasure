@@ -56,7 +56,7 @@ void printMap()
 
 
 void placeRandomWalls()
-{ // Places random walls excluding the border walls and the starting position of players.
+{ // Places random walls excluding the border walls .
 
 	int count = 0;
 
@@ -86,12 +86,40 @@ void placeRandomWalls()
 }
 
 
+
+void placeTreasures()
+{ // Places treasures represented by 'T' character in random empty positions.
+
+	int attempts = 0;
+
+	while (count < 12 && attempts < 999) 
+
+	{
+		int x = rand() % MAP_SIZE;
+		int y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+		{ // Places the treasure if the space is empty.
+
+			map[x][y] = 'T';
+			count++; 
+			
+		}
+		attempts++; // Prevents infinite loops in case of a full map.
+	}
+	
+}
+
+
+
 int main ()
 { // Main function that initializes and prints the map.
 
 	printf("Quest for the Lost Treasure\n");
 	initializeMap();
+	srand(time(NULL)); // Ensures that the random walls are placed differently each time the program is run.
 	placeRandomWalls();
+	placeTreasures();
 	printMap();
 
 	return 0;

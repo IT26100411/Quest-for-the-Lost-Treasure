@@ -91,6 +91,8 @@ void placeTreasures()
 { // Places treasures represented by 'T' character in random empty positions.
 
 	int attempts = 0;
+	int count = 0;
+	
 
 	while (count < 12 && attempts < 999) 
 
@@ -111,6 +113,63 @@ void placeTreasures()
 }
 
 
+void placeHealthPacks()
+
+{ // Places health packs represented by 'H' character in random empty positions.
+
+	int attempts = 0;
+	int count = 0;
+
+	while (count < 5 && attempts < 999)
+
+	{
+
+		int x = rand() % MAP_SIZE;
+		int y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+
+		{ // Places the health pack if the space is empty.
+
+			map[x][y] = 'H';
+			count++;
+
+		}
+		attempts++; // Prevents infinite loops in case of a full map.
+	}
+
+}
+
+
+
+void placeKeys()
+
+{ // Places keys represented by 'K' character in random empty positions.
+
+	int attempts = 0;
+	int count = 0;
+
+	while (count < 3 && attempts < 999)
+
+	{
+
+		int x = rand() % MAP_SIZE;
+		int y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+
+		{ // Places Keys if the space is empty.
+			
+			map[x][y] = 'K';
+			count++;
+
+
+		}
+		attempts++;
+	}
+}
+
+
 
 int main ()
 { // Main function that initializes and prints the map.
@@ -120,6 +179,8 @@ int main ()
 	srand(time(NULL)); // Ensures that the random walls are placed differently each time the program is run.
 	placeRandomWalls();
 	placeTreasures();
+	placeHealthPacks();
+	placeKeys();
 	printMap();
 
 	return 0;

@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define MAP_SIZE 15
+#define TREASURE_COUNT 12
+#define WALL_COUNT 30
+#define HEALTH_COUNT 5
+#define KEY_COUNT 3
+#define DOOR_COUNT 3
+#define HIDDEN_TRAP_COUNT 10
 
 char map[MAP_SIZE][MAP_SIZE]; 
 int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidden traps on the map.
-
 
 
 typedef struct 
@@ -19,61 +25,15 @@ typedef struct
 	int playerScore;
 	int keysCollected;
 
-}player_t;
+} player_t;
 
 
 player_t player1; 
 
-void placePlayer()
-
-{
-	int x, y;
-
-	while (1){
-
-		x = rand() % MAP_SIZE;
-		y = rand() % MAP_SIZE;
-
-		if (map[x][y] == ' ')
-
-		{ // Places the player represented by 'P' character in a random empty position.
-
-			player1.row = x;
-			player1.col = y;
-			player1.playerName[0] = 'P';
-			player1.playerSymbol = '1';
-			player1.playerHealth = 100;
-			player1.playerScore = 0;
-			player1.keysCollected = 0;
-
-			map[x][y] = player1.playerSymbol; // Places the player symbol on the map.
-			break;
-
-		}
-	}
-}
-
-
-
-void initializeHiddenTraps()
-{ // Initializes the hidden traps on the map.
-
-	int i, j;
-
-	for (i = 0; i < MAP_SIZE; i++)
-	{
-		for (j = 0; j < MAP_SIZE; j++)
-		{
-			hiddenTraps[i][j] = 0; // Sets all positions to 0, indicating no traps.
-
-		}
-	}
-
-}
-
 
 
 void initializeMap()
+
 {  // Initializes the 15x15 map and places border walls.
 
 	int i, j;
@@ -102,30 +62,32 @@ void initializeMap()
 
 
 
-void printMap()
-{  // Prints the 15X15 map to the console as output.
-	
+void initializeHiddenTraps()
+
+{ // Initializes the hidden traps on the map.
+
 	int i, j;
 
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		for (j = 0; j < MAP_SIZE; j++)
 		{
-			printf("%c ", map[i][j]);
+			hiddenTraps[i][j] = 0; // Sets all positions to 0, indicating no traps.
+
 		}
-	printf("\n");
 	}
 
-}	
+}
 
 
 
 void placeRandomWalls()
+
 { // Places random walls excluding the border walls .
 
 	int count = 0;
 
-	while (count < 30)
+	while (count < WALL_COUNT)
 	{
 		
 		int x = rand() % MAP_SIZE;
@@ -153,13 +115,14 @@ void placeRandomWalls()
 
 
 void placeTreasures()
+
 { // Places treasures represented by 'T' character in random empty positions.
 
 	int attempts = 0;
 	int count = 0;
 	
 
-	while (count < 12 && attempts < 999) 
+	while (count < TREASURE_COUNT && attempts < TREASURE_COUNT * MAP_SIZE * MAP_SIZE) 
 
 	{
 		int x = rand() % MAP_SIZE;
@@ -185,7 +148,7 @@ void placeHealthPacks()
 	int attempts = 0;
 	int count = 0;
 
-	while (count < 5 && attempts < 999)
+	while (count < HEALTH_COUNT && attempts < HEALTH_COUNT * MAP_SIZE * MAP_SIZE)
 
 	{
 
@@ -207,6 +170,7 @@ void placeHealthPacks()
 
 
 
+
 void placeKeys()
 
 { // Places keys represented by 'K' character in random empty positions.
@@ -214,7 +178,7 @@ void placeKeys()
 	int attempts = 0;
 	int count = 0;
 
-	while (count < 3 && attempts < 999)
+	while (count < KEY_COUNT && attempts < KEY_COUNT * MAP_SIZE * MAP_SIZE)
 
 	{
 
@@ -243,7 +207,7 @@ void placeDoors()
 	int attempts = 0;
 	int count = 0;
 
-	while (count < 3 && attempts < 999)
+	while (count < DOOR_COUNT && attempts < DOOR_COUNT * MAP_SIZE * MAP_SIZE)
 
 	{
 
@@ -270,7 +234,7 @@ void placeHiddenTraps()
 	int attempts = 0;
 	int count = 0;
 
-	while (count < 10 && attempts < MAP_SIZE * MAP_SIZE)
+	while (count < HIDDEN_TRAP_COUNT && attempts < HIDDEN_TRAP_COUNT * MAP_SIZE * MAP_SIZE)
 
 	{
 
@@ -289,23 +253,68 @@ void placeHiddenTraps()
 	}
 }
 
+void placePlayer()
+
+{
+	int x, y;
+
+	while (1){
+
+		x = rand() % MAP_SIZE;
+		y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+
+		{ // Places the player represented by 'P' character in a random empty position.
+
+			player1.row = x;
+			player1.col = y;
+			strcpy(player1.playerName, "Player 1");
+			player1.playerSymbol = '1';
+			player1.playerHealth = 100;
+			player1.playerScore = 0;
+			player1.keysCollected = 0;
+
+			map[x][y] = player1.playerSymbol; // Places the player symbol on the map.
+			break;
+
+		}
+	}
+}
 
 
-int main ()
-{ // Main function that initializes and prints the map.
+void printMap()
 
-	printf("Quest for the Lost Treasure\n");
-	initializeMap();
-	srand(time(NULL)); // Ensures that the random walls are placed differently each time the program is run.
-	placeRandomWalls();
-	placeTreasures();
-	placeHealthPacks();
-	placeKeys();
-	placePlayer();
-	placeDoors();
-	placeHiddenTraps();
-	printMap();
+{  // Prints the 15X15 map to the console as output.
+	
+	int i, j;
+
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			printf("%c ", map[i][j]);
+		}
+	printf("\n");
+	}
+
+}
+
+int main()
+
+{
+	srand(time(NULL)); // Seeds the random number generator with the current time.
+
+	initializeMap(); // Initializes the map with border walls.
+	placeRandomWalls(); // Places random walls on the map.
+	placeTreasures(); // Places treasures on the map.
+	placeHealthPacks(); // Places health packs on the map.
+	placeKeys(); // Places keys on the map.
+	placeDoors(); // Places doors on the map.
+	placeHiddenTraps(); // Places hidden traps on the map.
+	placePlayer(); // Places the player on the map.
+
+	printMap(); // Prints the final map to the console.
 
 	return 0;
-
-}    
+}

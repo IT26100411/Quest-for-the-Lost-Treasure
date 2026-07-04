@@ -18,17 +18,74 @@ int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidde
 typedef struct 
 {
 	char playerName[50];
-	char playerSymbol;
 	int row;
 	int col;	
 	int playerHealth;
 	int playerScore;
 	int keysCollected;
+	int attempts;
+	char playerSymbol;
 
 } player_t;
 
 
-player_t player1; 
+player_t players[2]; // Array to hold two players.
+
+
+void placePlayers()
+{
+    int attempts;
+
+    // PLAYER 1
+    players[0].playerSymbol = '1';
+    players[0].playerHealth = 100;
+    players[0].playerScore = 0;
+    players[0].keysCollected = 0;
+
+    attempts = 0;
+    do {
+        players[0].row = rand() % MAP_SIZE;
+        players[0].col = rand() % MAP_SIZE;
+        attempts++;
+    }
+    while(map[players[0].row][players[0].col] != ' ' && attempts < 1000);
+
+    map[players[0].row][players[0].col] = '1';
+
+    // PLAYER 2
+    players[1].playerSymbol = '2';
+    players[1].playerHealth = 100;
+    players[1].playerScore = 0;
+    players[1].keysCollected = 0;
+
+    attempts = 0;
+    do {
+        players[1].row = rand() % MAP_SIZE;
+        players[1].col = rand() % MAP_SIZE;
+        attempts++;
+    }
+    while(
+        map[players[1].row][players[1].col] != ' ' ||
+        (players[1].row == players[0].row && players[1].col == players[0].col)
+        && attempts < 1000
+    );
+
+    map[players[1].row][players[1].col] = '2';
+
+}
+
+
+
+int isValidMove(int x, int y)
+{
+    if (x < 0 || x >= MAP_SIZE || y < 0 || y >= MAP_SIZE)
+        return 0;
+
+    if (map[x][y] == '#')
+        return 0;
+
+    return 1;
+}
 
 
 
@@ -253,34 +310,6 @@ void placeHiddenTraps()
 	}
 }
 
-void placePlayer()
-
-{
-	int x, y;
-
-	while (1){
-
-		x = rand() % MAP_SIZE;
-		y = rand() % MAP_SIZE;
-
-		if (map[x][y] == ' ')
-
-		{ // Places the player represented by 'P' character in a random empty position.
-
-			player1.row = x;
-			player1.col = y;
-			strcpy(player1.playerName, "Player 1");
-			player1.playerSymbol = '1';
-			player1.playerHealth = 100;
-			player1.playerScore = 0;
-			player1.keysCollected = 0;
-
-			map[x][y] = player1.playerSymbol; // Places the player symbol on the map.
-			break;
-
-		}
-	}
-}
 
 
 void printMap()
@@ -312,7 +341,7 @@ int main()
 	placeKeys(); // Places keys on the map.
 	placeDoors(); // Places doors on the map.
 	placeHiddenTraps(); // Places hidden traps on the map.
-	placePlayer(); // Places the player on the map.
+	placePlayers(); // Places the player on the map.
 
 	printMap(); // Prints the final map to the console.
 

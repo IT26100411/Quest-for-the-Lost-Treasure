@@ -5,8 +5,7 @@
 #define MAP_SIZE 15
 
 char map[MAP_SIZE][MAP_SIZE]; 
-
-
+int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidden traps on the map.
 
 
 
@@ -52,6 +51,24 @@ void placePlayer()
 
 		}
 	}
+}
+
+
+
+void initializeHiddenTraps()
+{ // Initializes the hidden traps on the map.
+
+	int i, j;
+
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			hiddenTraps[i][j] = 0; // Sets all positions to 0, indicating no traps.
+
+		}
+	}
+
 }
 
 
@@ -219,6 +236,61 @@ void placeKeys()
 
 
 
+void placeDoors()
+
+{ // Places doors represented by 'D' character in random empty positions.
+
+	int attempts = 0;
+	int count = 0;
+
+	while (count < 3 && attempts < 999)
+
+	{
+
+		int x = rand() % MAP_SIZE;
+		int y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ')
+
+		{ // Places Doors if the space is empty.
+
+			map[x][y] = 'D';
+			count++;
+
+		}
+		attempts++;
+	}
+}
+
+
+void placeHiddenTraps()
+
+{ // Places hidden traps that are not visible on the map but can affect the player if they step on them.
+
+	int attempts = 0;
+	int count = 0;
+
+	while (count < 10 && attempts < MAP_SIZE * MAP_SIZE)
+
+	{
+
+		int x = rand() % MAP_SIZE;
+		int y = rand() % MAP_SIZE;
+
+		if (map[x][y] == ' ' && hiddenTraps[x][y] == 0)
+
+		{ // Places Hidden Traps if the space is empty and no trap is already placed.
+
+			hiddenTraps[x][y] = 1; // Marks the position as having a hidden trap.
+			count++;
+
+		}
+		attempts++;
+	}
+}
+
+
+
 int main ()
 { // Main function that initializes and prints the map.
 
@@ -230,6 +302,8 @@ int main ()
 	placeHealthPacks();
 	placeKeys();
 	placePlayer();
+	placeDoors();
+	placeHiddenTraps();
 	printMap();
 
 	return 0;

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define MAP_SIZE 15
+#define HIDDEN_TRAPS 10
 #define TREASURE_COUNT 12
 #define WALL_COUNT 30
 #define HEALTH_COUNT 5
@@ -13,7 +14,7 @@
 #define EMPTY ' '
 
 char map[MAP_SIZE][MAP_SIZE]; 
-int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidden traps on the map.
+int hiddenTraps[HIDDEN_TRAPS][HIDDEN_TRAPS]; // 2D array to store the positions of hidden traps on the map.
 
 
 typedef struct 
@@ -123,6 +124,8 @@ int isValidMove(int x, int y)
 	if (map[x][y] == '1' || map[x][y] == '2')
         return 0;
 
+	return 1;
+
 }
 
 
@@ -132,12 +135,15 @@ void movePlayer(int p)
 
 {
 	char move;
+	
 
 	printf("Player %c move (w/a/s/d)", players[p].playerSymbol);
 	scanf(" %c", &move);
 
 	int newRow = players[p].row;
 	int newCol = players[p].col;
+
+	char tile;
 
 	if (move == 'w') newRow--;
 	if (move == 'a') newCol--;
@@ -147,6 +153,7 @@ void movePlayer(int p)
 	if (isValidMove(newRow, newCol))
 
 {
+	 tile = map[newRow][newCol];
 
      map[players[p].row][players[p].col] = EMPTY;
  
@@ -154,6 +161,8 @@ void movePlayer(int p)
      players[p].col = newCol;
 
      map[newRow][newCol] = players[p].playerSymbol;
+
+	 printf("Tile entered: %c\n", tile);
 
 }
 
@@ -428,7 +437,6 @@ placeDoors();
 
 placeHiddenTraps();
 placePlayers();
-movePlayer(0);
 
 int currentPlayer = 0;
 

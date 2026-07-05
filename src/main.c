@@ -10,12 +10,14 @@
 #define KEY_COUNT 3
 #define DOOR_COUNT 3
 #define HIDDEN_TRAP_COUNT 10
+#define EMPTY ' '
 
 char map[MAP_SIZE][MAP_SIZE]; 
 int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidden traps on the map.
 
 
 typedef struct 
+
 {
 	char playerName[50];
 	int row;
@@ -23,7 +25,6 @@ typedef struct
 	int playerHealth;
 	int playerScore;
 	int keysCollected;
-	int attempts;
 	char playerSymbol;
 
 } player_t;
@@ -33,50 +34,85 @@ player_t players[2]; // Array to hold two players.
 
 
 void placePlayers()
-{
-    int attempts;
 
+{
+    
     // PLAYER 1
     players[0].playerSymbol = '1';
     players[0].playerHealth = 100;
     players[0].playerScore = 0;
     players[0].keysCollected = 0;
 
-    attempts = 0;
-    do {
-        players[0].row = rand() % MAP_SIZE;
-        players[0].col = rand() % MAP_SIZE;
-        attempts++;
-    }
-    while(map[players[0].row][players[0].col] != ' ' && attempts < 1000);
+    
+    int placed = 0;
+    int attempts = 0;
 
-    map[players[0].row][players[0].col] = '1';
+
+while (attempts < 1000)
+
+{
+    players[0].row = rand() % MAP_SIZE;
+    players[0].col = rand() % MAP_SIZE;
+
+    if (map[players[0].row][players[0].col] == EMPTY)
+
+    {
+        placed = 1;
+        break;
+    }
+
+    attempts++;
+}
+
+
+if (!placed)
+
+{
+    players[0].row = 1;
+    players[0].col = 1;
+}
+
+
 
     // PLAYER 2
-    players[1].playerSymbol = '2';
-    players[1].playerHealth = 100;
-    players[1].playerScore = 0;
-    players[1].keysCollected = 0;
+players[1].playerSymbol = '2';
+players[1].playerHealth = 100;
+players[1].playerScore = 0;
+players[1].keysCollected = 0;
 
-    attempts = 0;
-    do {
-        players[1].row = rand() % MAP_SIZE;
-        players[1].col = rand() % MAP_SIZE;
-        attempts++;
+int placed2 = 0;
+int attempts2 = 0;
+
+while (attempts2 < 1000)
+{
+    players[1].row = rand() % MAP_SIZE;
+    players[1].col = rand() % MAP_SIZE;
+
+    if (map[players[1].row][players[1].col] == EMPTY &&
+        !(players[1].row == players[0].row && players[1].col == players[0].col))
+    {
+        placed2 = 1;
+        break;
     }
-    while(
-        map[players[1].row][players[1].col] != ' ' ||
-        (players[1].row == players[0].row && players[1].col == players[0].col)
-        && attempts < 1000
-    );
 
-    map[players[1].row][players[1].col] = '2';
+    attempts2++;
+}
+
+if (!placed2)
+{
+    players[1].row = 1;
+    players[1].col = 2;
+}
+
+map[players[0].row][players[0].col] = players[0].playerSymbol;
+map[players[1].row][players[1].col] = players[1].playerSymbol;
 
 }
 
 
 
 int isValidMove(int x, int y)
+
 {
     if (x < 0 || x >= MAP_SIZE || y < 0 || y >= MAP_SIZE)
         return 0;
@@ -85,6 +121,49 @@ int isValidMove(int x, int y)
         return 0;
 
     return 1;
+}
+
+
+
+void movePlayer(int p)
+
+
+{
+	char move;
+
+	printf("Player %c move (w/a/s/d)", players[p].playerSymbol);
+	scanf(" %c", &move);
+
+	int newRow = players[p].row;
+	int newCol = players[p].col;
+
+	if (move == 'w') newRow--;
+	if (move == 'a') newCol--;
+	if (move == 's') newRow--;
+	if (move == 'd') newCol++;
+
+	if (isValidMove(newRow, newCol))
+
+{
+
+     map[players[p].row][players[p].col] = EMPTY;
+ 
+     players[p].row = newRow;
+     players[p].col = newCol;
+
+     map[newRow][newCol] = players[p].playerSymbol;
+
+}
+
+     else
+
+{
+
+     printf("Invalid move!\n");
+
+}
+
+
 }
 
 
@@ -107,7 +186,7 @@ void initializeMap()
 
 			else {
 
-				map[i][j] = ' ';
+				map[i][j] = EMPTY;
 
 			}
 
@@ -157,7 +236,7 @@ void placeRandomWalls()
 
 		}
 	
-		if (map[x][y] == ' ') 
+		if (map[x][y] == EMPTY) 
 		{ // Places a wall represented by '#' character if the position is empty.
 
 			map[x][y] = '#';
@@ -185,7 +264,7 @@ void placeTreasures()
 		int x = rand() % MAP_SIZE;
 		int y = rand() % MAP_SIZE;
 
-		if (map[x][y] == ' ')
+		if (map[x][y] == EMPTY)
 		{ // Places the treasure if the space is empty.
 
 			map[x][y] = 'T';
@@ -212,7 +291,7 @@ void placeHealthPacks()
 		int x = rand() % MAP_SIZE;
 		int y = rand() % MAP_SIZE;
 
-		if (map[x][y] == ' ')
+		if (map[x][y] == EMPTY)
 
 		{ // Places the health pack if the space is empty.
 
@@ -242,7 +321,7 @@ void placeKeys()
 		int x = rand() % MAP_SIZE;
 		int y = rand() % MAP_SIZE;
 
-		if (map[x][y] == ' ')
+		if (map[x][y] == EMPTY )
 
 		{ // Places Keys if the space is empty.
 			
@@ -271,7 +350,7 @@ void placeDoors()
 		int x = rand() % MAP_SIZE;
 		int y = rand() % MAP_SIZE;
 
-		if (map[x][y] == ' ')
+		if (map[x][y] == EMPTY )
 
 		{ // Places Doors if the space is empty.
 
@@ -298,7 +377,7 @@ void placeHiddenTraps()
 		int x = rand() % MAP_SIZE;
 		int y = rand() % MAP_SIZE;
 
-		if (map[x][y] == ' ' && hiddenTraps[x][y] == 0)
+		if (map[x][y] == EMPTY && hiddenTraps[x][y] == 0)
 
 		{ // Places Hidden Traps if the space is empty and no trap is already placed.
 
@@ -332,18 +411,28 @@ void printMap()
 int main()
 
 {
-	srand(time(NULL)); // Seeds the random number generator with the current time.
 
-	initializeMap(); // Initializes the map with border walls.
-	placeRandomWalls(); // Places random walls on the map.
-	placeTreasures(); // Places treasures on the map.
-	placeHealthPacks(); // Places health packs on the map.
-	placeKeys(); // Places keys on the map.
-	placeDoors(); // Places doors on the map.
-	placeHiddenTraps(); // Places hidden traps on the map.
-	placePlayers(); // Places the player on the map.
+srand(time(NULL));
 
-	printMap(); // Prints the final map to the console.
+initializeMap();
+initializeHiddenTraps();
 
-	return 0;
+placeRandomWalls();
+
+placeTreasures();
+placeHealthPacks();
+placeKeys();
+placeDoors();
+
+placeHiddenTraps();
+placePlayers();
+movePlayer(0);
+
+while (1)
+
+{
+    printMap();
+    movePlayer(0);
+}
+
 }

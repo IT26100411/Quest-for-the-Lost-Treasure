@@ -33,6 +33,7 @@ typedef struct
 
 player_t players[2]; // Array to hold two players.
 
+void checkTile(int p, char tile);
 
 void placePlayers()
 
@@ -162,7 +163,36 @@ void movePlayer(int p)
 
      map[newRow][newCol] = players[p].playerSymbol;
 
-	 printf("Tile entered: %c\n", tile);
+	 checkTile(p, tile);
+
+	 if (tile == 'T')
+
+	 {
+		players[p].playerScore += 10;
+		printf("Treasure collected!\n");
+	 }
+
+	 else if (tile == 'H')
+
+	 {
+		players[p].playerHealth += 20;
+
+		if (players[p].playerHealth > 100);
+		{
+			players[p].playerHealth = 100;
+		}
+
+		printf("Health restored!\n");
+
+	 }
+
+	 else if (tile == 'K')
+
+	 {
+		players[p].keysCollected++;
+		printf("Key collected!\n");
+	 }
+
 
 }
 
@@ -173,6 +203,97 @@ void movePlayer(int p)
      printf("Invalid move!\n");
 
 }
+
+
+}
+
+
+
+void checkTile(int p, char title)
+
+{
+	int row = players[p].row;
+	int col = players[p].col;
+
+	if (map[row][col] == 'T')
+
+	{
+		players[p].playerScore += 10;
+		map[row][col] = EMPTY;
+		printf("Collected Treasure! Score +10!\n"); 
+	
+	}
+
+	else if (map[row][col] == 'H')
+
+	{
+
+		players[p].playerHealth += 20;
+		 
+		 if(players[p].playerHealth > 100)
+		    players[p].playerHealth = 100;
+
+		map[row][col] = EMPTY;
+		printf("Health restored! +20 HP!\n");
+		
+
+	}
+
+	else if (map[row][col] == 'K')
+
+	{
+		players[p].keysCollected++;
+
+		map[row][col] = EMPTY;
+		printf("Key collected!\n");
+
+	}
+
+	else if ( hiddenTraps[row][col] == ' ' )
+
+	{
+		players[p].playerHealth -= 20;
+
+		if(players[p].playerHealth < 0)
+		   players[p].playerHealth = 0;
+
+		hiddenTraps[row][col] = EMPTY;
+
+		printf("Fallen Under A Trap! -20 HP \n");
+
+		if (players[p].playerHealth == 0 )
+
+		{
+			printf("Player %c has been eliminated!\n", players[p].playerSymbol);
+			
+		}
+
+	}
+
+
+
+}
+
+
+
+void displayStats()
+
+{
+	int i;
+
+	printf ("\n==================================");
+
+	for(i = 0; i < 2; i++)
+
+	{
+		printf("Player %c\n", players[i].playerSymbol);
+		printf("Health : %d\n", players[i].playerHealth);
+		printf("Score : %d\n", players[i].playerScore);
+		printf("Keys : %d\n", players[i].keysCollected);
+
+	}
+
+	printf ("\n==================================");
 
 
 }
@@ -443,8 +564,8 @@ int currentPlayer = 0;
 while (1)
 {
     printMap();
+	displayStats();
     movePlayer(currentPlayer);
-
     currentPlayer = 1 - currentPlayer;
 }
 

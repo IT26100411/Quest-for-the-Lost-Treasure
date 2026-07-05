@@ -4,7 +4,6 @@
 #include <string.h>
 
 #define MAP_SIZE 15
-#define HIDDEN_TRAPS 10
 #define TREASURE_COUNT 12
 #define WALL_COUNT 30
 #define HEALTH_COUNT 5
@@ -14,7 +13,7 @@
 #define EMPTY ' '
 
 char map[MAP_SIZE][MAP_SIZE]; 
-int hiddenTraps[HIDDEN_TRAPS][HIDDEN_TRAPS]; // 2D array to store the positions of hidden traps on the map.
+int hiddenTraps[MAP_SIZE][MAP_SIZE]; // 2D array to store the positions of hidden traps on the map.
 
 
 typedef struct 
@@ -33,7 +32,7 @@ typedef struct
 
 player_t players[2]; // Array to hold two players.
 
-void checkTile(int p, char tile);
+void checkTile(int p, char tile, int row, int col);
 
 void placePlayers()
 
@@ -125,7 +124,7 @@ int isValidMove(int x, int y)
 	if (map[x][y] == '1' || map[x][y] == '2')
         return 0;
 
-	return 1;
+        return 1;
 
 }
 
@@ -154,7 +153,8 @@ void movePlayer(int p)
 	if (isValidMove(newRow, newCol))
 
 {
-	 tile = map[newRow][newCol];
+
+	 char tile = map[newRow][newCol];
 
      map[players[p].row][players[p].col] = EMPTY;
  
@@ -163,68 +163,31 @@ void movePlayer(int p)
 
      map[newRow][newCol] = players[p].playerSymbol;
 
-	 checkTile(p, tile);
+	 checkTile(p, tile, newRow, newCol);
 
-	 if (tile == 'T')
+}  
+    else
 
-	 {
-		players[p].playerScore += 10;
-		printf("Treasure collected!\n");
-	 }
-
-	 else if (tile == 'H')
-
-	 {
-		players[p].playerHealth += 20;
-
-		if (players[p].playerHealth > 100);
-		{
-			players[p].playerHealth = 100;
-		}
-
-		printf("Health restored!\n");
-
-	 }
-
-	 else if (tile == 'K')
-
-	 {
-		players[p].keysCollected++;
-		printf("Key collected!\n");
-	 }
-
+	{
+		printf("Invalide move!\n");
+	}
 
 }
 
-     else
+
+
+void checkTile(int p, char tile, int row, int col)
 
 {
-
-     printf("Invalid move!\n");
-
-}
-
-
-}
-
-
-
-void checkTile(int p, char title)
-
-{
-	int row = players[p].row;
-	int col = players[p].col;
-
-	if (map[row][col] == 'T')
+	if (tile == 'T')
 
 	{
 		players[p].playerScore += 10;
-		map[row][col] = EMPTY;
 		printf("Collected Treasure! Score +10!\n"); 
 	
 	}
 
-	else if (map[row][col] == 'H')
+	else if (tile == 'H')
 
 	{
 
@@ -233,23 +196,20 @@ void checkTile(int p, char title)
 		 if(players[p].playerHealth > 100)
 		    players[p].playerHealth = 100;
 
-		map[row][col] = EMPTY;
 		printf("Health restored! +20 HP!\n");
 		
 
 	}
 
-	else if (map[row][col] == 'K')
+	else if (tile == 'K')
 
 	{
 		players[p].keysCollected++;
-
-		map[row][col] = EMPTY;
 		printf("Key collected!\n");
 
 	}
 
-	else if ( hiddenTraps[row][col] == ' ' )
+	else if ( hiddenTraps[row][col] == 1 )
 
 	{
 		players[p].playerHealth -= 20;
@@ -257,7 +217,7 @@ void checkTile(int p, char title)
 		if(players[p].playerHealth < 0)
 		   players[p].playerHealth = 0;
 
-		hiddenTraps[row][col] = EMPTY;
+		hiddenTraps[row][col] = 0;
 
 		printf("Fallen Under A Trap! -20 HP \n");
 
@@ -271,7 +231,6 @@ void checkTile(int p, char title)
 	}
 
 
-
 }
 
 
@@ -281,7 +240,7 @@ void displayStats()
 {
 	int i;
 
-	printf ("\n==================================");
+	printf ("\n==================================\n");
 
 	for(i = 0; i < 2; i++)
 
@@ -293,7 +252,7 @@ void displayStats()
 
 	}
 
-	printf ("\n==================================");
+	printf ("\n==================================\n");
 
 
 }
@@ -563,10 +522,33 @@ int currentPlayer = 0;
 
 while (1)
 {
+    system("cls");
+
     printMap();
-	displayStats();
+    displayStats();
+
     movePlayer(currentPlayer);
+
+    if (players[currentPlayer].playerHealth <= 0)
+    {
+        printf("\n=============================\n");
+        printf("Player %c has been eliminated!\n",
+               players[currentPlayer].playerSymbol);
+
+        printf("Player %c Wins!\n",
+               players[1 - currentPlayer].playerSymbol);
+
+        printf("\n=============================\n");
+
+        break;
+    }
+
     currentPlayer = 1 - currentPlayer;
 }
+
+printf("\nGame Over!\n");
+
+return 0;
+
 
 }

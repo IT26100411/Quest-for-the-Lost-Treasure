@@ -120,7 +120,9 @@ int isValidMove(int x, int y)
     if (map[x][y] == '#')
         return 0;
 
-    return 1;
+	if (map[x][y] == '1' || map[x][y] == '2')
+        return 0;
+
 }
 
 
@@ -139,7 +141,7 @@ void movePlayer(int p)
 
 	if (move == 'w') newRow--;
 	if (move == 'a') newCol--;
-	if (move == 's') newRow--;
+	if (move == 's') newRow++;
 	if (move == 'd') newCol++;
 
 	if (isValidMove(newRow, newCol))
@@ -428,11 +430,14 @@ placeHiddenTraps();
 placePlayers();
 movePlayer(0);
 
-while (1)
+int currentPlayer = 0;
 
+while (1)
 {
     printMap();
-    movePlayer(0);
+    movePlayer(currentPlayer);
+
+    currentPlayer = 1 - currentPlayer;
 }
 
 }
